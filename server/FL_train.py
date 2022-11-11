@@ -2,153 +2,148 @@ import time
 import torch
 import logging
 import os
-import shutil
-from torch.nn import MultiMarginLoss
-from server.utils.data_manager import build_data_loader
+from server.utils.server import server_info
+from server.model.CNN import CNN
 from server.model.GRU import GRU
 from server.model.LSTM import LSTM
+from server.utils.calculate import score_plot
 from server.utils.log_helper import init_log, add_file_handler
-from server.utils.serialization import save_checkpoint
-from server.utils.device_info import mydevice
 from server.loss.crossentropyloss import LabelSmoothCrossEntropyLoss
 from server.loss.centerloss import CenterLoss
-from server.network.send_manager import socket_client
-from server.network.receive_manager import socket_service_file, socket_service_init
+from server.utils.memory import Monitor
 
 logger = logging.getLogger('global')
 
 
-def del_file(path_data):
-    for i in os.listdir(path_data):
-        file_data = path_data + "/" + i
-        if os.path.isfile(file_data):
-            os.remove(file_data)
-        else:
-            del_file(file_data)
-
-
-def calculate_loss(criterion, predict_label, true_label, centerloss_input):
-    loss = 0.0
-    for index, loss_function in enumerate(criterion):
-        if index != 1:
-            loss += loss_function(predict_label, true_label)
-        else:
-            loss += loss_function(centerloss_input, true_label)
-    return loss
-
-
-def train(save_epoch, train_set, model, criterions, optimizer, device):
-    model.train()
-    for epoch in range(mydevice.device_epoch):
-        # start training
-        start = time.time()
-        loss_last = 0.0
-        # start loop
-        for batch, (data, label) in enumerate(train_set):
-            data = data.to(device)
-            label = label.to(device)
-            optimizer.zero_grad()
-            center_input, train_output, hidden_cell_n = model(data)
-            train_output.to(device)
-            loss = calculate_loss(criterions, train_output, label, center_input)
-            loss.backward(retain_graph=True)
-            optimizer.step()
-            if (batch + 1) % mydevice.print_frequency == 0:
-                logger.info('Epoch [{}/{}], Batch [{}], Loss [{:.4f}]'
-                            .format(epoch + 1, mydevice.device_epoch, batch + 1, loss.data))
-            loss_last = loss.data
-        # print progress
-        end = time.time()
-        logger.info('Epoch [{}/{}], Train Loss mean: {:.4f}, running time:{:.0f}s'
-                    .format(epoch + 1, mydevice.device_epoch, loss_last, end - start))
-
-    path_dir = './snapshot/send/client' + str(mydevice.device_id)
-    if not os.path.exists(path_dir):
-        os.mkdir(path_dir)
-    save_checkpoint(path_dir + '/epoch' + str(save_epoch) + '.pth', model)
-    logger.info('--------------------------------------------------------------')
-
-
-def log_init():
-    # log
-    init_log('global', logging.INFO)
-    add_file_handler('global', './logs/logs_' + str(mydevice.device_id) + '.txt', logging.INFO)
-    logger.info("log init done")
-
-
-def datasets_init():
-    # datasets_seperation
-    start_build_datasets = time.time()
-    train_set, feature_size = build_data_loader()
-    logger.info("dataset build done. time:{:.4f}".format(time.time() - start_build_datasets))
-    return train_set, feature_size
-
-
-def criterion_init(feature_size, num_classes):
-    device = torch.device(mydevice.device)
+def criterion_init(model_type=0, device='cuda', feature_size=0, num_classes=0, learning_rate=0.01, weight_decay=0.1):
     # model
-    if mydevice.model_type == 0:
+    if model_type == 0:
         model = GRU(input_size=feature_size,
                     hidden_layer_size=256,
                     num_layers=2,
                     output_size=num_classes,
                     dropout=0)
-    else:
+    elif model_type == 1:
         model = LSTM(input_size=feature_size,
                      output_size=num_classes,
                      hidden_layer_size=256,
                      num_layers=2,
                      dropout=0)
-    model.to(device)
-
-    # loss
-    criterions = [LabelSmoothCrossEntropyLoss(device=mydevice.device),
-                  CenterLoss(num_classes=num_classes,
-                             feat_dim=256,
-                             device=mydevice.device)]
+    else:
+        model = CNN(input_size=feature_size,
+                    output_size=num_classes)
 
     # optimizers
-    if mydevice.optimizer_type == "sgd":
-        optimizer = torch.optim.SGD(model.parameters(),
-                                    lr=mydevice.learning_rate,
-                                    momentum=mydevice.momentum,
-                                    weight_decay=mydevice.weight_decay)
-    else:
-        optimizer = torch.optim.Adam(model.parameters(),
-                                     lr=mydevice.learning_rate,
-                                     weight_decay=mydevice.weight_decay)
+    optimizer = torch.optim.Adam(model.parameters(),
+                                 lr=learning_rate,
+                                 weight_decay=weight_decay)
 
-    return model, optimizer, criterions, device
+    criterions = [LabelSmoothCrossEntropyLoss(device=device),
+                  CenterLoss(num_classes=num_classes,
+                             feat_dim=256,
+                             device=device)]
+
+    return model.to(torch.device(device)), optimizer, criterions
 
 
-def train_baseline():
-    log_init()
-    socket_service_init()
-    train_set, feature_size = datasets_init()
-    num_classes = len(mydevice.attack_dic)
-    model, optimizer, criterions, device = criterion_init(feature_size=feature_size,
-                                                          num_classes=num_classes)
-    for federated_epoch in range(mydevice.federated_epoch):
-        train(save_epoch=federated_epoch,
-              train_set=train_set,
-              model=model,
-              criterions=criterions,
-              optimizer=optimizer,
-              device=device)
-        socket_client('./snapshot/send/client' + str(mydevice.device_id) + '/epoch' + str(federated_epoch) + '.pth')
-        socket_service_file(federated_epoch)
-        stat_dict = torch.load(
-            './snapshot/receive/client' + str(mydevice.device_id) + '/epoch' + str(federated_epoch) + '.pth',
-            map_location=torch.device('cpu'))
-        model.load_state_dict(stat_dict["model"])
+if __name__ == '__main__':
+    a = Monitor(1)
+    a.start()
 
-    # copy the file to final model
-    path_dir = './snapshot/final/client' + str(mydevice.device_id)
-    if not os.path.exists(path_dir):
-        os.mkdir(path_dir)
-    shutil.copyfile(
-        src='./snapshot/receive/client' + str(mydevice.device_id) + '/epoch' + str(
-            mydevice.federated_epoch - 1) + '.pth',
-        dst='./snapshot/final/client' + str(mydevice.device_id) + '/final.pth')
-    del_file('./snapshot/send/client' + str(mydevice.device_id))
-    del_file('./snapshot/receive/client' + str(mydevice.device_id))
+    # init log
+    init_log('global', logging.INFO)
+    add_file_handler('global', './logs/logs.txt', logging.INFO)
+    logger.info("log init done")
+
+    # init server and client
+    server = server_info()
+    server.load_client()
+    server.init_client()
+
+    # init dataset
+    #start_time = time.time()
+    #server.load_dataset()
+    #logger.info("dataset build done. time:{:.4f}".format(time.time() - start_time))
+
+'''
+    # calculate importance
+    for device_id in range(server.num_devices):
+        start_time = time.time()
+        importance = client_list[device_id].calculate_importance()
+        server.importance_append(importance)
+        logger.info("device {} importance finished, time:{:.4f}".format(device_id, time.time() - start_time))
+
+    drop_columns = server.importance_calculation()
+    logger.info("importance dictionary:{}".format(server.importance_dict))
+
+    for device_id in range(server.num_devices):
+        client_list[device_id].feature_reduction(drop_columns)
+    server.feature_reduction(drop_columns)
+    logger.info("feature reduction finished, {} features have dropped, {} features remained".format(
+        len(drop_columns), server.feature_size))
+    logger.info("reduction columns:{}".format(drop_columns))
+
+    # init evaluation
+    s = score_plot(server.num_devices, server.evaluation_client)
+
+    # init model
+    global_model, global_optimizer, global_criterions = criterion_init(model_type=server.model_type,
+                                                                       device=server.device,
+                                                                       feature_size=server.feature_size,
+                                                                       num_classes=len(server.attack_dict),
+                                                                       learning_rate=server.learning_rate,
+                                                                       weight_decay=server.weight_decay)
+    if server.fed_algorithm != 'fedavg' and server.fed_algorithm != 'fedavg+centerloss':
+        tmp_model, _, _ = criterion_init(model_type=server.model_type,
+                                         device=server.device,
+                                         feature_size=server.feature_size,
+                                         num_classes=len(server.attack_dict),
+                                         learning_rate=server.learning_rate,
+                                         weight_decay=server.weight_decay)
+    model_state_dict = {"model": global_model.state_dict()}
+    optimizer_state_dict = {"optimizer": global_optimizer.state_dict()}
+    torch.save(model_state_dict, "./snapshot/after/global.pth")
+    for device_id in range(server.num_devices):
+        torch.save(optimizer_state_dict, "./snapshot/before/optimizer_device" + str(device_id) + ".pth")
+        torch.save(model_state_dict, "./snapshot/before/model_device" + str(device_id) + ".pth")
+
+    # IoT_FD
+    logger.info("start training")
+    for federated_epoch in range(server.federated_epoch):
+        # iterate each device
+        for device_id in range(server.num_devices):
+            # init the local model and optimizer
+            if server.fed_algorithm == 'fedavg' or server.fed_algorithm == 'fedavg+centerloss':
+                client_list[device_id].train(model=global_model,
+                                             criterions=global_criterions,
+                                             optimizer=global_optimizer)
+            else:
+                client_list[device_id].train(model=global_model,
+                                             tmp_model=tmp_model,
+                                             criterions=global_criterions,
+                                             optimizer=global_optimizer)
+
+        # global aggregation
+        server.aggregation()
+
+        # global evaluation
+        logger.info("-------------------------global epoch {}----------------------".format(str(federated_epoch)))
+        model_state = torch.load('./snapshot/after/global.pth')
+        global_model.load_state_dict(model_state['model'])
+        accuracy, precision, recall, f1_score = server.evaluation(global_model)
+        s.update(-1, federated_epoch, accuracy, precision, recall, f1_score)
+        logger.info('--------------------------------------------------------------')
+
+        # client evaluation
+        if server.evaluation_client:
+            for device_id in range(server.num_devices):
+                logger.info("--------------------------device {}---------------------------".format(str(device_id)))
+                model_state = torch.load('./snapshot/before/model_device' + str(device_id) + '.pth')
+                global_model.load_state_dict(model_state['model'])
+                accuracy, precision, recall, f1_score = server.evaluation(global_model)
+                s.update(device_id, federated_epoch, accuracy, precision, recall, f1_score)
+                logger.info('--------------------------------------------------------------')
+    #a.stop()
+    s.plot()
+    s.save_result()
+'''

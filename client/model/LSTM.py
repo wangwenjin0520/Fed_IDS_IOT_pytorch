@@ -15,8 +15,6 @@ class LSTM(nn.Module):
 
     def forward(self, input_seq):
         batch_size = len(input_seq)
-        hidden_cell = (torch.zeros(self.num_layers, batch_size, self.hidden_layer_size),
-                       torch.zeros(self.num_layers, batch_size, self.hidden_layer_size))
-        lstm_out, hidden_cell_n = self.lstm(input_seq.view(1, batch_size, -1), hidden_cell)
+        lstm_out, hidden_cell_n = self.lstm(input_seq.view(1, batch_size, -1), None)
         predictions = self.linear(lstm_out[-1, :, :])
-        return predictions, hidden_cell_n
+        return lstm_out[-1, :, :], predictions

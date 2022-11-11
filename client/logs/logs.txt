@@ -1,0 +1,5 @@
+[2022-11-11 11:11:23,942-rk0-FL_train.py# 56] log init done
+[2022-11-11 11:11:23,943-rk0-client.py# 37] algorithm:fedavg, model type:0
+[2022-11-11 11:12:24,926-rk0-FL_train.py# 56] log init done
+[2022-11-11 11:12:24,926-rk0-client.py# 37] algorithm:fedavg, model type:0
+[2022-11-11 11:13:24,531-rk0-FL_train.py# 56] log init done

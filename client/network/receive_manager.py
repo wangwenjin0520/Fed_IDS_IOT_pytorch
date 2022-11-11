@@ -2,14 +2,15 @@ import socket
 import struct
 import logging
 import os
-from federated_learning.utils.device_info import mydevice
+import json
+
 logger = logging.getLogger('global')
 
 
-def socket_service_file(epoch):
+def socket_service_file(epoch, address, port):
     s = socket.socket()
     s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    s.bind((mydevice.recv_addr, mydevice.recv_port))
+    s.bind((address, port))
     s.listen(10)
     conn, addr = s.accept()
 
@@ -42,32 +43,19 @@ def socket_service_file(epoch):
     conn.close()
 
 
-def socket_service_init():
+def socket_service_init(address, port):
     s = socket.socket()
     s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    s.bind((mydevice.recv_addr, mydevice.recv_port))
+    s.bind((address, port))
     s.listen(10)
     conn, addr = s.accept()
     while True:
-        # ------------------------------------------------------
-        # 3i:normalize type(0, 1, 2)
-        # classes type(0:binary, 1:multi), global epoch
-        message_size = struct.calcsize('!7i')
-        buf = conn.recv(message_size)
-        if buf:
-            mydevice.device_id, \
-            mydevice.model_type, \
-            mydevice.normalize_type, \
-            mydevice.batch_size, \
-            mydevice.non_iid,\
-            mydevice.federated_epoch, \
-            mydevice.device_epoch = struct.unpack('!7i', buf)
-            break
-    while True:
         buf = conn.recv(1024)
         if buf:
-            conn.sendall(mydevice.key.encrypt_aes_key(buf))
+            result = json.loads(buf.decode('utf-8'))
+            conn.sendall(bytes("200", encoding="utf-8"))
             # end, disconnect
             s.close()
             conn.close()
             break
+    return result

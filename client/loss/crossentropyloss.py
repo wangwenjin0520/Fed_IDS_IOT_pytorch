@@ -9,12 +9,12 @@ from torch.nn.modules.loss import _WeightedLoss
 
 
 class LabelSmoothCrossEntropyLoss(_WeightedLoss):
-    def __init__(self, weight=None, reduction='mean', smoothing=0.0, device="cuda"):
+    def __init__(self, weight=None, reduction='mean', smoothing=0.0, device=None):
         super().__init__(weight=weight, reduction=reduction)
         self.smoothing = smoothing
         self.weight = weight
         self.reduction = reduction
-        self.device = torch.device(device)
+        self.device = device
 
     @staticmethod
     def _smooth_one_hot(targets: torch.Tensor, n_classes: int, smoothing=0.0):

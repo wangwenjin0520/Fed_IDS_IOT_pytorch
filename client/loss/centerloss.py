@@ -13,11 +13,11 @@ class CenterLoss(nn.Module):
         feat_dim (int): feature dimension.
     """
 
-    def __init__(self, num_classes=10, feat_dim=2, device="cuda"):
+    def __init__(self, num_classes=10, feat_dim=2, device=None):
         super(CenterLoss, self).__init__()
         self.num_classes = num_classes
         self.feat_dim = feat_dim
-        self.device = torch.device(device)
+        self.device = device
         self.centers = nn.Parameter(torch.randn(self.num_classes, self.feat_dim).to(self.device))
 
     def forward(self, x, labels):
