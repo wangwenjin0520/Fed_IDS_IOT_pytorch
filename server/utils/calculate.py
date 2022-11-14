@@ -30,13 +30,10 @@ class label_record:
 
 
 class score:
-    def __init__(self):
+    def __init__(self, attack_dic):
         self.attack_dic = {}
-        if mydevice.class_type == 0:
-            self.attack_dic.update({0: label_record("normal"), 1: label_record("attack")})
-        else:
-            for key, value in mydevice.attack_dic.items():
-                self.attack_dic.update({value: label_record(key)})
+        for key, value in attack_dic.items():
+            self.attack_dic.update({value: label_record(key)})
         self.num_classes = len(self.attack_dic)
         self.class_matrix = np.zeros([self.num_classes, self.num_classes]).astype(np.int)
         self.dataset_volumn = 0
@@ -110,8 +107,6 @@ class score:
     def update(self, predict_label, true_label):
         label_pd = pd.DataFrame({"predict_label": pd.Series(predict_label.tolist()),
                                  "true_label": pd.Series(true_label.tolist())})
-        if mydevice.class_type == 0:
-            label_pd = process_testlabel(label_pd)
         label_pd_group = label_pd.groupby(['predict_label', 'true_label'])
         for (predict_label_key, true_label_key), value in label_pd_group:
             predict_index = self.find_index(predict_label_key)
@@ -125,33 +120,30 @@ class score:
 
 
 class score_plot:
-    def __init__(self):
+    def __init__(self, target):
         self.score_dic = {}
-        self.score_dic.update({-1: {"accuracy": [], "precision": [], "recall": [], "f1_score": []}})
-        for device_id in range(mydevice.num_device):
-            self.score_dic.update({device_id: {"accuracy": [], "precision": [], "recall": [], "f1_score": []}})
+        self.score_dic.update({"global": {"accuracy": [], "precision": [], "recall": [], "f1_score": []}})
+        for key in target.keys():
+            self.score_dic.update({key: {"accuracy": [], "precision": [], "recall": [], "f1_score": []}})
         self.epoch = []
 
-    def update(self, device_id, epoch, accuracy, precision, recall, f1_score):
+    def update(self, name, epoch, accuracy, precision, recall, f1_score):
         if epoch not in self.epoch:
             self.epoch.append(epoch)
-        self.score_dic[device_id]["accuracy"].append(accuracy)
-        self.score_dic[device_id]["precision"].append(precision)
-        self.score_dic[device_id]["recall"].append(recall)
-        self.score_dic[device_id]["f1_score"].append(f1_score)
+        self.score_dic[name]["accuracy"].append(accuracy)
+        self.score_dic[name]["precision"].append(precision)
+        self.score_dic[name]["recall"].append(recall)
+        self.score_dic[name]["f1_score"].append(f1_score)
 
     def plot(self):
         pyplot.figure()
-        color_list = get_cmap(mydevice.num_device)
+        color_list = get_cmap(len(self.score_dic))
         # accuracy
         plot1 = pyplot.subplot(111)
         pyplot.xlabel("epoch", fontsize=18)
         pyplot.ylabel("accuracy", fontsize=18)
-        for device_id in range(mydevice.num_device):
-            pyplot.plot(self.epoch, self.score_dic[device_id]["accuracy"], label="device" + str(device_id),
-                        color=color_list(device_id))
-        pyplot.plot(self.epoch, self.score_dic[-1]["accuracy"], label="global model",
-                    color='black')
+        for index, (key, value) in enumerate(self.score_dic.items()):
+            pyplot.plot(self.epoch, value["accuracy"], label=key, color=color_list(index))
         pyplot.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0, fontsize=18)
         pyplot.tick_params(labelsize=13)
         pyplot.show()
@@ -167,26 +159,6 @@ class score_plot:
 
         result = pd.DataFrame(accuracy_result)
         result.to_excel('./logs/result.xlsx', index=False)
-
-
-def evaluate(model, test_set, device):
-    start = time.time()
-    model.eval()
-    s = score()
-    with torch.no_grad():
-        for batch, (data, label) in enumerate(test_set):
-            data = data.to(device)
-            label = label.to(device)
-            _, test_output = model(data)
-            predict_label = torch.argmax(test_output, dim=1)
-            true_label = label.view(-1)
-            s.update(predict_label, true_label)
-    accuracy, precision, recall, f1_score = s.compute()
-    end = time.time()
-    logger.info("accuracy: {:.4f}%, precision:{:.4f}, recall:{:.4f}, test time:{:.4f}s"
-                .format(accuracy, precision, recall, end - start))
-    del s
-    return accuracy, precision, recall, f1_score
 
 
 def get_cmap(n, name='hsv'):

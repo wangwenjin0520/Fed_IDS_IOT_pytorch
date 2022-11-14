@@ -46,8 +46,8 @@ def criterion_init(model_type=0, device='cuda', feature_size=0, num_classes=0, l
 
 
 if __name__ == '__main__':
-    a = Monitor(1)
-    a.start()
+    #a = Monitor(1)
+    #a.start()
 
     # init log
     init_log('global', logging.INFO)
@@ -72,44 +72,7 @@ if __name__ == '__main__':
 
     # init model
     client.init_model()
-'''
+
     # IoT_FD
     logger.info("start training")
-    for federated_epoch in range(server.federated_epoch):
-        # iterate each device
-        for device_id in range(server.num_devices):
-            # init the local model and optimizer
-            if server.fed_algorithm == 'fedavg' or server.fed_algorithm == 'fedavg+centerloss':
-                client_list[device_id].train(model=global_model,
-                                             criterions=global_criterions,
-                                             optimizer=global_optimizer)
-            else:
-                client_list[device_id].train(model=global_model,
-                                             tmp_model=tmp_model,
-                                             criterions=global_criterions,
-                                             optimizer=global_optimizer)
-
-        # global aggregation
-        server.aggregation()
-
-        # global evaluation
-        logger.info("-------------------------global epoch {}----------------------".format(str(federated_epoch)))
-        model_state = torch.load('./snapshot/after/global.pth')
-        global_model.load_state_dict(model_state['model'])
-        accuracy, precision, recall, f1_score = server.evaluation(global_model)
-        s.update(-1, federated_epoch, accuracy, precision, recall, f1_score)
-        logger.info('--------------------------------------------------------------')
-
-        # client evaluation
-        if server.evaluation_client:
-            for device_id in range(server.num_devices):
-                logger.info("--------------------------device {}---------------------------".format(str(device_id)))
-                model_state = torch.load('./snapshot/before/model_device' + str(device_id) + '.pth')
-                global_model.load_state_dict(model_state['model'])
-                accuracy, precision, recall, f1_score = server.evaluation(global_model)
-                s.update(device_id, federated_epoch, accuracy, precision, recall, f1_score)
-                logger.info('--------------------------------------------------------------')
-    #a.stop()
-    s.plot()
-    s.save_result()
-'''
+    client.train()
