@@ -4,12 +4,13 @@ from server.model.GRU import GRU
 from server.model.LSTM import LSTM
 from server.utils.data_manager import load_test, MyDataset
 from server.utils.calculate import score
-from server.network.send_manager import socket_send_init_client, socket_send_drop_columns
+from server.network.send_manager import socket_send_init_client, socket_send_drop_columns, socket_send_file
 from server.network.receive_manager import socket_receive_feature_selection
 from torch.utils.data import DataLoader
 import torch
 import time
 import logging
+
 logger = logging.getLogger('global')
 
 
@@ -38,6 +39,7 @@ class server_info:
         self.feature_size = 0
         self.evaluation_client = False
         self.score_threshold = 0.01
+        self.model = None
 
         # network
         self.device_epoch = 1  # IoT_FD epoch for each communication epoch
@@ -96,22 +98,24 @@ class server_info:
 
     def init_client_model(self):
         if self.model_type == 0:
-            model = GRU(input_size=self.feature_size,
-                        hidden_layer_size=256,
-                        num_layers=2,
-                        output_size=len(self.attack_dict),
-                        dropout=0)
+            self.model = GRU(input_size=self.feature_size,
+                             hidden_layer_size=256,
+                             num_layers=2,
+                             output_size=len(self.attack_dict),
+                             dropout=0)
         elif self.model_type == 1:
-            model = LSTM(input_size=self.feature_size,
-                         output_size=len(self.attack_dict),
-                         hidden_layer_size=256,
-                         num_layers=2,
-                         dropout=0)
+            self.model = LSTM(input_size=self.feature_size,
+                              output_size=len(self.attack_dict),
+                              hidden_layer_size=256,
+                              num_layers=2,
+                              dropout=0)
         else:
-            model = CNN(input_size=self.feature_size,
-                        output_size=len(self.attack_dict))
-        model_state_dict = {"model": model.state_dict()}
+            self.model = CNN(input_size=self.feature_size,
+                             output_size=len(self.attack_dict))
+        model_state_dict = {"model": self.model.state_dict()}
         torch.save(model_state_dict, "./snapshot/global.pth")
+        for client in self.target:
+            socket_send_file(client["address"], client["port"])
 
     def aggregation(self):
         os.remove('./snapshot/after/global.pth')

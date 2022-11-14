@@ -4,8 +4,16 @@ import os
 import logging
 import struct
 import json
-from server.network.encryption import md5_string_encrypt
+import hashlib
 logger = logging.getLogger('global')
+
+
+def md5_encrypt(filepath):
+    m = hashlib.md5()
+    file = open(filepath, 'rb')
+    m.update(file.read())
+    file.close()
+    return m.hexdigest()
 
 
 def socket_send_init_client(message, address, port):
@@ -33,12 +41,15 @@ def socket_send_drop_columns(drop_columns, address, port):
             s.close()
             break
 
-def socket_send_file(filepath, address, port):
+
+def socket_send_file(address, port):
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.connect((address, port))
+    fhead = struct.pack('!32s', md5_encrypt("./snapshot/global.pth").encode('latin-1'))
+    s.send(fhead)
     # send file
     while True:
-        fp_tmp = open(filepath + '.txt', 'rb')
+        fp_tmp = open("./snapshot/global.pth", 'rb')
         while True:
             data = fp_tmp.read(1024)
             if not data:
@@ -48,7 +59,7 @@ def socket_send_file(filepath, address, port):
         fp_tmp.close()
         buf = s.recv(1024)
         if buf.decode("utf-8") == "200":
-            os.remove(filepath + '.txt')
+            os.remove("./snapshot/global.pth")
             logger.info('model transmission completed')
             s.shutdown(2)
             s.close()
@@ -56,4 +67,3 @@ def socket_send_file(filepath, address, port):
         else:
             logger.info("model transmission fault")
             continue
-'''

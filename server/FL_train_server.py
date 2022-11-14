@@ -62,6 +62,9 @@ if __name__ == '__main__':
     server.load_dataset()
     server.feature_reduction()
 
+    # init client mode
+    server.init_client_model()
+
 
     '''
     # init dataset

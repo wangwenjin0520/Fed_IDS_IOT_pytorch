@@ -6,7 +6,6 @@ from client.utils.client import client_info
 from client.model.CNN import CNN
 from client.model.GRU import GRU
 from client.model.LSTM import LSTM
-from client.utils.calculate import score_plot
 from client.utils.log_helper import init_log, add_file_handler
 from client.loss.crossentropyloss import LabelSmoothCrossEntropyLoss
 from client.loss.centerloss import CenterLoss
@@ -73,7 +72,7 @@ if __name__ == '__main__':
 
     # init model
     client.init_model()
-
+'''
     # IoT_FD
     logger.info("start training")
     for federated_epoch in range(server.federated_epoch):

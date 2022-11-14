@@ -6,7 +6,8 @@ from client.model.LSTM import LSTM
 from client.loss.crossentropyloss import LabelSmoothCrossEntropyLoss
 from client.loss.centerloss import CenterLoss
 from client.utils.data_manager import load_train, MyDataset
-from client.network.receive_manager import socket_service_init_parameter, socket_service_init_usecolumns
+from client.network.receive_manager import socket_service_init_parameter, socket_service_init_usecolumns, \
+    socket_service_file
 from client.network.send_manager import socket_send_feature_importance
 from torch.utils.data import DataLoader
 from sklearn.feature_selection import SelectKBest, chi2
@@ -40,6 +41,10 @@ class client_info:
         self.label = None
         self.train_loader = None
         self.dataset_header = None
+        self.global_model = None
+        self.tmp_model = None
+        self.global_optimizer = None
+        self.global_criterions = None
         self.address = '192.168.255.1'
         self.port = 4000
         self.target_address = '192.168.255.1'
@@ -109,101 +114,102 @@ class client_info:
         return model.to(torch.device(self.device)), optimizer, criterions
 
     def init_model(self):
-        global_model, global_optimizer, global_criterions = self.criterion_init()
+        self.global_model, self.global_optimizer, self.global_criterions = self.criterion_init()
         if self.fed_algorithm != 'fedavg' and self.fed_algorithm != 'fedavg+centerloss':
-            tmp_model, _, _ = self.criterion_init()
-        model_state_dict = {"model": global_model.state_dict()}
-        optimizer_state_dict = {"optimizer": global_optimizer.state_dict()}
-        torch.save(model_state_dict, "./snapshot/after/global.pth")
-        torch.save(optimizer_state_dict, "./snapshot/before/optimizer_device" + str(device_id) + ".pth")
-        torch.save(model_state_dict, "./snapshot/before/model_device" + str(device_id) + ".pth")
+            self.tmp_model, _, _ = self.criterion_init()
+        socket_service_file(0, self.address, self.port)
+        global_model_state = torch.load('./snapshot/epoch0.pth')
+        self.global_model.load_state_dict(global_model_state['model'])
 
-    def train(self, model=None, tmp_model=None, criterions=None, optimizer=None):
-        global_model_state = torch.load('./snapshot/after/global.pth')
-        global_optimizer_state = torch.load('./snapshot/before/optimizer_device' + str(self.device_id) + '.pth')
-        model.load_state_dict(global_model_state['model'])
-        optimizer.load_state_dict(global_optimizer_state['optimizer'])
-        device = torch.device(self.device)
-        model.train()
-        total_size = 0
-        logger.info("-------------device {}---------------".format(str(self.device_id)))
-        for epoch in range(self.device_epoch):
-            # start training
-            start = time.time()
-            loss_last = 0.0
-            batch = 0
+    def train(self):
+        for epoch in range(0, self.global_epoch):
+            global_model_state = torch.load('./snapshot/epoch0.pth')
+            self.global_model.load_state_dict(global_model_state['model'])
+            global_model_state = torch.load('./snapshot/after/global.pth')
+            global_optimizer_state = torch.load('./snapshot/before/optimizer_device' + str(self.device_id) + '.pth')
+            model.load_state_dict(global_model_state['model'])
+            optimizer.load_state_dict(global_optimizer_state['optimizer'])
+            device = torch.device(self.device)
+            model.train()
+            total_size = 0
+            logger.info("-------------device {}---------------".format(str(self.device_id)))
+            for epoch in range(self.device_epoch):
+                # start training
+                start = time.time()
+                loss_last = 0.0
+                batch = 0
 
-            # start loop
-            for batch, (data, label) in enumerate(self.train_loader):
-                data = data.to(device)
-                label = label.to(device)
-                center_input, train_output = model(data)
-                train_output.to(device)
+                # start loop
+                for batch, (data, label) in enumerate(self.train_loader):
+                    data = data.to(device)
+                    label = label.to(device)
+                    center_input, train_output = model(data)
+                    train_output.to(device)
 
-                # fedprox
-                if self.fed_algorithm == 'fedprox' or self.fed_algorithm == 'fedprox+centerloss':
-                    original_model_state = torch.load('./snapshot/after/global.pth')
-                    tmp_model.load(original_model_state['model'])
-                    fedprox_loss = 0
-                    proximal_term = 0.0
-                    for w, w_t in zip(model.parameters(), tmp_model.parameters()):
-                        proximal_term += (w - w_t).norm(2)
-                        fedprox_loss += (self.fedprox_mu / 2) * proximal_term
-                    cross_entropy_loss = criterions[0](train_output, label)
-                    if self.fed_algorithm == 'fedprox':
-                        loss = cross_entropy_loss + fedprox_loss
+                    # fedprox
+                    if self.fed_algorithm == 'fedprox' or self.fed_algorithm == 'fedprox+centerloss':
+                        original_model_state = torch.load('./snapshot/after/global.pth')
+                        tmp_model.load(original_model_state['model'])
+                        fedprox_loss = 0
+                        proximal_term = 0.0
+                        for w, w_t in zip(model.parameters(), tmp_model.parameters()):
+                            proximal_term += (w - w_t).norm(2)
+                            fedprox_loss += (self.fedprox_mu / 2) * proximal_term
+                        cross_entropy_loss = criterions[0](train_output, label)
+                        if self.fed_algorithm == 'fedprox':
+                            loss = cross_entropy_loss + fedprox_loss
+                        else:
+                            center_loss = criterions[1](center_input, label)
+                            loss = center_loss + cross_entropy_loss + fedprox_loss
+
+                    # fedmoon
+                    elif self.fed_algorithm == 'moon' or self.fed_algorithm == 'moon+centerloss':
+                        prev_model_state = torch.load('./snapshot/before/model_device' + str(self.device_id) + '.pth')
+                        tmp_model.load_state_dict(prev_model_state['model'])
+                        tmp_model.to(torch.device(self.device))
+                        prev_representation, _ = tmp_model(data)
+
+                        original_model_state = torch.load('./snapshot/after/global.pth')
+                        tmp_model.load_state_dict(original_model_state['model'])
+                        tmp_model.to(torch.device(self.device))
+                        global_representation, _ = tmp_model(data)
+
+                        cos = torch.nn.CosineSimilarity(dim=-1)
+                        criterion_tmp = torch.nn.CrossEntropyLoss()
+                        current_prev = cos(center_input, prev_representation).reshape(-1, 1)
+                        current_global = cos(center_input, global_representation).reshape(-1, 1)
+                        logits = torch.cat((current_global, current_prev), dim=1)
+                        fedmoon_label = torch.zeros(data.size(0)).cuda().long()
+                        fedmoon_loss = criterion_tmp(logits, fedmoon_label).data
+                        cross_entropy_loss = criterions[0](train_output, label)
+                        if self.fed_algorithm == 'moon':
+                            loss = cross_entropy_loss + 10 * fedmoon_loss
+                        else:
+                            center_loss = criterions[1](center_input, label)
+                            loss = cross_entropy_loss + center_loss + 100 * fedmoon_loss
+
                     else:
-                        center_loss = criterions[1](center_input, label)
-                        loss = center_loss + cross_entropy_loss + fedprox_loss
+                        cross_entropy_loss = criterions[0](train_output, label)
+                        if self.fed_algorithm == 'fedavg':
+                            loss = cross_entropy_loss
+                        else:
+                            center_loss = criterions[1](center_input, label)
+                            loss = cross_entropy_loss + center_loss
 
-                # fedmoon
-                elif self.fed_algorithm == 'moon' or self.fed_algorithm == 'moon+centerloss':
-                    prev_model_state = torch.load('./snapshot/before/model_device' + str(self.device_id) + '.pth')
-                    tmp_model.load_state_dict(prev_model_state['model'])
-                    tmp_model.to(torch.device(self.device))
-                    prev_representation, _ = tmp_model(data)
+                    optimizer.zero_grad()
+                    loss.backward(retain_graph=True)
+                    optimizer.step()
+                    loss_last = loss.data
+                total_size = batch * self.batch_size
+                # print progress
+                end = time.time()
+                logger.info('Epoch [{}/{}], Train Loss mean: {:.4f}, running time:{:.4f}s'
+                            .format(epoch + 1, self.device_epoch, loss_last, end - start))
 
-                    original_model_state = torch.load('./snapshot/after/global.pth')
-                    tmp_model.load_state_dict(original_model_state['model'])
-                    tmp_model.to(torch.device(self.device))
-                    global_representation, _ = tmp_model(data)
-
-                    cos = torch.nn.CosineSimilarity(dim=-1)
-                    criterion_tmp = torch.nn.CrossEntropyLoss()
-                    current_prev = cos(center_input, prev_representation).reshape(-1, 1)
-                    current_global = cos(center_input, global_representation).reshape(-1, 1)
-                    logits = torch.cat((current_global, current_prev), dim=1)
-                    fedmoon_label = torch.zeros(data.size(0)).cuda().long()
-                    fedmoon_loss = criterion_tmp(logits, fedmoon_label).data
-                    cross_entropy_loss = criterions[0](train_output, label)
-                    if self.fed_algorithm == 'moon':
-                        loss = cross_entropy_loss + 10 * fedmoon_loss
-                    else:
-                        center_loss = criterions[1](center_input, label)
-                        loss = cross_entropy_loss + center_loss + 100 * fedmoon_loss
-
-                else:
-                    cross_entropy_loss = criterions[0](train_output, label)
-                    if self.fed_algorithm == 'fedavg':
-                        loss = cross_entropy_loss
-                    else:
-                        center_loss = criterions[1](center_input, label)
-                        loss = cross_entropy_loss + center_loss
-
-                optimizer.zero_grad()
-                loss.backward(retain_graph=True)
-                optimizer.step()
-                loss_last = loss.data
-            total_size = batch * self.batch_size
-            # print progress
-            end = time.time()
-            logger.info('Epoch [{}/{}], Train Loss mean: {:.4f}, running time:{:.4f}s'
-                        .format(epoch + 1, self.device_epoch, loss_last, end - start))
-
-        os.remove('./snapshot/before/model_device' + str(self.device_id) + '.pth')
-        os.remove('./snapshot/before/optimizer_device' + str(self.device_id) + '.pth')
-        self.final_save(model, optimizer, total_size)
-        logger.info('--------------------------------------------------------------')
+            os.remove('./snapshot/before/model_device' + str(self.device_id) + '.pth')
+            os.remove('./snapshot/before/optimizer_device' + str(self.device_id) + '.pth')
+            self.final_save(model, optimizer, total_size)
+            logger.info('--------------------------------------------------------------')
 
     def final_save(self, model, optimizer, total_size):
         model_path = './snapshot/before/model_device' + str(self.device_id) + '.pth'
