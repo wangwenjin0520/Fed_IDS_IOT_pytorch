@@ -31,7 +31,7 @@ def normalization(data):
 
 
 def load_test(attack_dict):
-    files_name = './datasets/dataset.csv'
+    files_name = './dataset/dataset.csv'
     datasets = pd.read_csv(files_name)
     datasets = datasets.replace({'label': attack_dict})
     total_size = len(datasets)

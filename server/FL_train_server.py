@@ -8,8 +8,6 @@ from server.model.GRU import GRU
 from server.model.LSTM import LSTM
 from server.utils.calculate import score_plot
 from server.utils.log_helper import init_log, add_file_handler
-from server.loss.crossentropyloss import LabelSmoothCrossEntropyLoss
-from server.loss.centerloss import CenterLoss
 from server.utils.memory import Monitor
 
 logger = logging.getLogger('global')
@@ -60,12 +58,17 @@ if __name__ == '__main__':
     server.load_client()
     server.init_client()
 
+    # calculate importance
+    server.load_dataset()
+    server.feature_reduction()
+
+
+    '''
     # init dataset
     #start_time = time.time()
     #server.load_dataset()
     #logger.info("dataset build done. time:{:.4f}".format(time.time() - start_time))
 
-'''
     # calculate importance
     for device_id in range(server.num_devices):
         start_time = time.time()

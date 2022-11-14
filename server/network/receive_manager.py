@@ -4,6 +4,7 @@ import struct
 import logging
 import os
 import time
+import json
 from threading import Thread
 
 logger = logging.getLogger('global')
@@ -21,15 +22,15 @@ def md5_verify(filepath, veri_code):
         return False
 
 
-def socket_receive_feature_selection():
+def socket_receive_feature_selection(address, port, target):
     receive_list.clear()
     s = socket.socket()
     s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    s.bind((mydevice.recv_addr, mydevice.recv_port))
+    s.bind((address, port))
     s.listen(10)
-    while len(receive_list) != len(mydevice.target):
+    while len(receive_list) != len(target):
         conn, addr = s.accept()
-        receive_list.append({"address": str(addr[0]), "port": str(addr[1]), "state": 0})
+        receive_list.append({"address": str(addr[0]), "port": str(addr[1]), "state": 0, "message": None})
         thread = Thread(target=deal_feature_selection, args=(conn, str(addr[0]), str(addr[1])))
         thread.start()
     for i in receive_list:
@@ -38,45 +39,23 @@ def socket_receive_feature_selection():
                 break
             else:
                 time.sleep(5)
-    for client in mydevice.target:
-        filepath = "./dataset/column" + str(client["no"]) + ".txt"
-        fp = open(filepath, "r")
-        line = fp.readline()
-        use_columns = line.split(",")
-        mydevice.use_columns.append(use_columns)
-        fp.close()
-    mydevice.use_columns = list(set(mydevice.use_columns))
+    result = []
+    for i in receive_list:
+        result.append(i["message"])
+    return result
 
 
 def deal_feature_selection(conn, addr, port):
-    fileinfo_size = struct.calcsize("!i32s")
-    buf = conn.recv(fileinfo_size)
-    filesize, md5_veri_code = struct.unpack("!i32s", buf)
-    client_id = 0
-    for i in mydevice.target:
-        if i["address"] == addr & i["port"] == port:
-            client_id = i["id"]
-            break
     while True:
-        filepath = "./dataset/column" + str(client_id) + ".txt"
-        fp = open(filepath, "wb")
-        while True:
-            data = conn.recv(1024)
-            if data[-3:] == bytes('EOF', encoding='utf-8'):
-                fp.write(data[0:-3])
-                break
-            fp.write(data)
-        fp.close()
-        if md5_verify(filepath, md5_veri_code):
-            conn.sendall(bytes('model receive sucessfully'))
-            logger.info("client: {} columns selection completed".format(client_id))
-        else:
-            conn.sendall(bytes('model receive failed'))
-            logger.info("client: {} columns selection failed, re-transmitting".format(client_id))
-            continue
-    for i in receive_list:
-        if i["address"] == addr & i["port"] == port:
-            i["state"] = 1
+        buf = conn.recv(2048)
+        if buf:
+            for i in receive_list:
+                if i["address"] == addr and i["port"] == port:
+                    i["state"] = 1
+                    i["message"] = json.loads(buf.decode('utf-8'))
+                    break
+            break
+    conn.sendall(bytes('200', encoding='utf-8'))
     conn.close()
 
 

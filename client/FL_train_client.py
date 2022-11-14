@@ -3,14 +3,14 @@ import torch
 import logging
 import os
 from client.utils.client import client_info
-from server.model.CNN import CNN
-from server.model.GRU import GRU
-from server.model.LSTM import LSTM
-from server.utils.calculate import score_plot
-from server.utils.log_helper import init_log, add_file_handler
-from server.loss.crossentropyloss import LabelSmoothCrossEntropyLoss
-from server.loss.centerloss import CenterLoss
-from server.utils.memory import Monitor
+from client.model.CNN import CNN
+from client.model.GRU import GRU
+from client.model.LSTM import LSTM
+from client.utils.calculate import score_plot
+from client.utils.log_helper import init_log, add_file_handler
+from client.loss.crossentropyloss import LabelSmoothCrossEntropyLoss
+from client.loss.centerloss import CenterLoss
+from client.utils.memory import Monitor
 
 logger = logging.getLogger('global')
 
@@ -60,51 +60,19 @@ if __name__ == '__main__':
     client.init()
 
     # init dataset
-    #start_time = time.time()
-    #server.load_dataset()
-    #logger.info("dataset build done. time:{:.4f}".format(time.time() - start_time))
+    start_time = time.time()
+    client.load_dataset()
+    logger.info("dataset build done. time:{:.4f}".format(time.time() - start_time))
 
-'''
+
     # calculate importance
-    for device_id in range(server.num_devices):
-        start_time = time.time()
-        importance = client_list[device_id].calculate_importance()
-        server.importance_append(importance)
-        logger.info("device {} importance finished, time:{:.4f}".format(device_id, time.time() - start_time))
-
-    drop_columns = server.importance_calculation()
-    logger.info("importance dictionary:{}".format(server.importance_dict))
-
-    for device_id in range(server.num_devices):
-        client_list[device_id].feature_reduction(drop_columns)
-    server.feature_reduction(drop_columns)
-    logger.info("feature reduction finished, {} features have dropped, {} features remained".format(
-        len(drop_columns), server.feature_size))
-    logger.info("reduction columns:{}".format(drop_columns))
-
-    # init evaluation
-    s = score_plot(server.num_devices, server.evaluation_client)
+    start_time = time.time()
+    client.calculate_importance()
+    client.feature_reduction()
+    logger.info("importance finished, time:{:.4f}".format(time.time() - start_time))
 
     # init model
-    global_model, global_optimizer, global_criterions = criterion_init(model_type=server.model_type,
-                                                                       device=server.device,
-                                                                       feature_size=server.feature_size,
-                                                                       num_classes=len(server.attack_dict),
-                                                                       learning_rate=server.learning_rate,
-                                                                       weight_decay=server.weight_decay)
-    if server.fed_algorithm != 'fedavg' and server.fed_algorithm != 'fedavg+centerloss':
-        tmp_model, _, _ = criterion_init(model_type=server.model_type,
-                                         device=server.device,
-                                         feature_size=server.feature_size,
-                                         num_classes=len(server.attack_dict),
-                                         learning_rate=server.learning_rate,
-                                         weight_decay=server.weight_decay)
-    model_state_dict = {"model": global_model.state_dict()}
-    optimizer_state_dict = {"optimizer": global_optimizer.state_dict()}
-    torch.save(model_state_dict, "./snapshot/after/global.pth")
-    for device_id in range(server.num_devices):
-        torch.save(optimizer_state_dict, "./snapshot/before/optimizer_device" + str(device_id) + ".pth")
-        torch.save(model_state_dict, "./snapshot/before/model_device" + str(device_id) + ".pth")
+    client.init_model()
 
     # IoT_FD
     logger.info("start training")

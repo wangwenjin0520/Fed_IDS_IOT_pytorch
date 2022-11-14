@@ -21,7 +21,18 @@ def socket_send_init_client(message, address, port):
             break
 
 
-'''
+def socket_send_drop_columns(drop_columns, address, port):
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.connect((address, port))
+    data = json.dumps({"drop_columns": drop_columns})
+    while True:
+        s.send(bytes(data, encoding="utf-8"))
+        buf = s.recv(3)
+        if buf.decode('utf-8') == "200":
+            s.shutdown(2)
+            s.close()
+            break
+
 def socket_send_file(filepath, address, port):
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.connect((address, port))
@@ -36,7 +47,7 @@ def socket_send_file(filepath, address, port):
             s.send(data)
         fp_tmp.close()
         buf = s.recv(1024)
-        if buf.decode() == "model received":
+        if buf.decode("utf-8") == "200":
             os.remove(filepath + '.txt')
             logger.info('model transmission completed')
             s.shutdown(2)

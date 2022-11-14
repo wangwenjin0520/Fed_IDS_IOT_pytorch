@@ -6,3 +6,132 @@
 [2022-11-11 11:11:26,891-rk0-FL_train.py# 56] log init done
 [2022-11-11 11:12:22,241-rk0-FL_train.py# 56] log init done
 [2022-11-11 11:13:30,631-rk0-FL_train.py# 56] log init done
+[2022-11-11 23:47:42,778-rk0-FL_train.py# 56] log init done
+[2022-11-14 09:48:42,829-rk0-FL_train_server.py# 54] log init done
+[2022-11-14 09:48:55,672-rk0-FL_train_server.py# 54] log init done
+[2022-11-14 09:50:10,679-rk0-FL_train_server.py# 54] log init done
+[2022-11-14 09:50:24,972-rk0-FL_train_server.py# 54] log init done
+[2022-11-14 09:53:04,062-rk0-FL_train_server.py# 54] log init done
+[2022-11-14 09:54:53,019-rk0-FL_train_server.py# 54] log init done
+[2022-11-14 09:55:41,562-rk0-FL_train_server.py# 54] log init done
+[2022-11-14 09:55:57,095-rk0-FL_train_server.py# 54] log init done
+[2022-11-14 09:56:54,487-rk0-FL_train_server.py# 54] log init done
+[2022-11-14 09:57:04,496-rk0-FL_train_server.py# 54] log init done
+[2022-11-14 09:58:53,224-rk0-FL_train_server.py# 54] log init done
+[2022-11-14 10:01:11,674-rk0-FL_train_server.py# 54] log init done
+[2022-11-14 10:02:54,043-rk0-FL_train_server.py# 54] log init done
+[2022-11-14 10:03:05,437-rk0-FL_train_server.py# 54] log init done
+[2022-11-14 10:05:25,470-rk0-FL_train_server.py# 54] log init done
+[2022-11-14 10:05:37,416-rk0-FL_train_server.py# 54] log init done
+[2022-11-14 10:06:32,324-rk0-FL_train_server.py# 54] log init done
+[2022-11-14 10:06:39,308-rk0-FL_train_server.py# 54] log init done
+[2022-11-14 10:06:50,172-rk0-data_manager.py# 39] ----------------------------------------------------
+[2022-11-14 10:06:50,172-rk0-data_manager.py# 40]             testset     information                 
+[2022-11-14 10:06:50,871-rk0-data_manager.py# 43] mitm: 104
+[2022-11-14 10:06:50,873-rk0-data_manager.py# 43] scanning: 7241
+[2022-11-14 10:06:50,873-rk0-data_manager.py# 43] dos: 29
+[2022-11-14 10:06:50,873-rk0-data_manager.py# 43] ddos: 41
+[2022-11-14 10:06:50,873-rk0-data_manager.py# 43] injection: 55540
+[2022-11-14 10:06:50,873-rk0-data_manager.py# 43] password: 68042
+[2022-11-14 10:06:50,873-rk0-data_manager.py# 43] backdoor: 5429
+[2022-11-14 10:06:50,873-rk0-data_manager.py# 43] ransomware: 1020
+[2022-11-14 10:06:50,873-rk0-data_manager.py# 43] xss: 429862
+[2022-11-14 10:06:50,873-rk0-data_manager.py# 43] Benign: 503048
+[2022-11-14 10:06:50,875-rk0-data_manager.py# 44] TOTAL_SIZE:1070356
+[2022-11-14 10:06:50,875-rk0-data_manager.py# 45] ----------------------------------------------------
+[2022-11-14 10:07:00,347-rk0-server.py# 91] left columns:62
+[2022-11-14 10:08:58,084-rk0-FL_train_server.py# 54] log init done
+[2022-11-14 10:09:08,367-rk0-FL_train_server.py# 54] log init done
+[2022-11-14 10:09:17,060-rk0-data_manager.py# 39] ----------------------------------------------------
+[2022-11-14 10:09:17,060-rk0-data_manager.py# 40]             testset     information                 
+[2022-11-14 10:09:17,774-rk0-data_manager.py# 43] mitm: 104
+[2022-11-14 10:09:17,774-rk0-data_manager.py# 43] scanning: 7241
+[2022-11-14 10:09:17,775-rk0-data_manager.py# 43] dos: 29
+[2022-11-14 10:09:17,775-rk0-data_manager.py# 43] ddos: 41
+[2022-11-14 10:09:17,775-rk0-data_manager.py# 43] injection: 55540
+[2022-11-14 10:09:17,776-rk0-data_manager.py# 43] password: 68042
+[2022-11-14 10:09:17,776-rk0-data_manager.py# 43] backdoor: 5429
+[2022-11-14 10:09:17,776-rk0-data_manager.py# 43] ransomware: 1020
+[2022-11-14 10:09:17,776-rk0-data_manager.py# 43] xss: 429862
+[2022-11-14 10:09:17,777-rk0-data_manager.py# 43] Benign: 503048
+[2022-11-14 10:09:17,779-rk0-data_manager.py# 44] TOTAL_SIZE:1070356
+[2022-11-14 10:09:17,780-rk0-data_manager.py# 45] ----------------------------------------------------
+[2022-11-14 10:09:21,442-rk0-server.py# 91] left columns:62
+[2022-11-14 10:10:21,583-rk0-FL_train_server.py# 54] log init done
+[2022-11-14 10:10:31,548-rk0-data_manager.py# 39] ----------------------------------------------------
+[2022-11-14 10:10:31,549-rk0-data_manager.py# 40]             testset     information                 
+[2022-11-14 10:10:32,231-rk0-data_manager.py# 43] mitm: 104
+[2022-11-14 10:10:32,232-rk0-data_manager.py# 43] scanning: 7241
+[2022-11-14 10:10:32,232-rk0-data_manager.py# 43] dos: 29
+[2022-11-14 10:10:32,232-rk0-data_manager.py# 43] ddos: 41
+[2022-11-14 10:10:32,232-rk0-data_manager.py# 43] injection: 55540
+[2022-11-14 10:10:32,232-rk0-data_manager.py# 43] password: 68042
+[2022-11-14 10:10:32,233-rk0-data_manager.py# 43] backdoor: 5429
+[2022-11-14 10:10:32,233-rk0-data_manager.py# 43] ransomware: 1020
+[2022-11-14 10:10:32,233-rk0-data_manager.py# 43] xss: 429862
+[2022-11-14 10:10:32,233-rk0-data_manager.py# 43] Benign: 503048
+[2022-11-14 10:10:32,235-rk0-data_manager.py# 44] TOTAL_SIZE:1070356
+[2022-11-14 10:10:32,235-rk0-data_manager.py# 45] ----------------------------------------------------
+[2022-11-14 10:10:40,962-rk0-server.py# 91] left columns:62
+[2022-11-14 10:13:40,510-rk0-FL_train_server.py# 54] log init done
+[2022-11-14 10:13:48,761-rk0-data_manager.py# 39] ----------------------------------------------------
+[2022-11-14 10:13:48,761-rk0-data_manager.py# 40]             testset     information                 
+[2022-11-14 10:13:49,444-rk0-data_manager.py# 43] mitm: 104
+[2022-11-14 10:13:49,444-rk0-data_manager.py# 43] scanning: 7241
+[2022-11-14 10:13:49,445-rk0-data_manager.py# 43] dos: 29
+[2022-11-14 10:13:49,445-rk0-data_manager.py# 43] ddos: 41
+[2022-11-14 10:13:49,445-rk0-data_manager.py# 43] injection: 55540
+[2022-11-14 10:13:49,445-rk0-data_manager.py# 43] password: 68042
+[2022-11-14 10:13:49,445-rk0-data_manager.py# 43] backdoor: 5429
+[2022-11-14 10:13:49,445-rk0-data_manager.py# 43] ransomware: 1020
+[2022-11-14 10:13:49,445-rk0-data_manager.py# 43] xss: 429862
+[2022-11-14 10:13:49,446-rk0-data_manager.py# 43] Benign: 503048
+[2022-11-14 10:13:49,447-rk0-data_manager.py# 44] TOTAL_SIZE:1070356
+[2022-11-14 10:13:49,447-rk0-data_manager.py# 45] ----------------------------------------------------
+[2022-11-14 10:14:08,038-rk0-FL_train_server.py# 54] log init done
+[2022-11-14 10:14:16,342-rk0-data_manager.py# 39] ----------------------------------------------------
+[2022-11-14 10:14:16,342-rk0-data_manager.py# 40]             testset     information                 
+[2022-11-14 10:14:17,008-rk0-data_manager.py# 43] mitm: 104
+[2022-11-14 10:14:17,008-rk0-data_manager.py# 43] scanning: 7241
+[2022-11-14 10:14:17,009-rk0-data_manager.py# 43] dos: 29
+[2022-11-14 10:14:17,009-rk0-data_manager.py# 43] ddos: 41
+[2022-11-14 10:14:17,009-rk0-data_manager.py# 43] injection: 55540
+[2022-11-14 10:14:17,009-rk0-data_manager.py# 43] password: 68042
+[2022-11-14 10:14:17,009-rk0-data_manager.py# 43] backdoor: 5429
+[2022-11-14 10:14:17,009-rk0-data_manager.py# 43] ransomware: 1020
+[2022-11-14 10:14:17,010-rk0-data_manager.py# 43] xss: 429862
+[2022-11-14 10:14:17,010-rk0-data_manager.py# 43] Benign: 503048
+[2022-11-14 10:14:17,011-rk0-data_manager.py# 44] TOTAL_SIZE:1070356
+[2022-11-14 10:14:17,011-rk0-data_manager.py# 45] ----------------------------------------------------
+[2022-11-14 10:14:35,990-rk0-FL_train_server.py# 54] log init done
+[2022-11-14 10:14:44,385-rk0-data_manager.py# 39] ----------------------------------------------------
+[2022-11-14 10:14:44,385-rk0-data_manager.py# 40]             testset     information                 
+[2022-11-14 10:14:45,064-rk0-data_manager.py# 43] mitm: 104
+[2022-11-14 10:14:45,064-rk0-data_manager.py# 43] scanning: 7241
+[2022-11-14 10:14:45,065-rk0-data_manager.py# 43] dos: 29
+[2022-11-14 10:14:45,065-rk0-data_manager.py# 43] ddos: 41
+[2022-11-14 10:14:45,065-rk0-data_manager.py# 43] injection: 55540
+[2022-11-14 10:14:45,065-rk0-data_manager.py# 43] password: 68042
+[2022-11-14 10:14:45,065-rk0-data_manager.py# 43] backdoor: 5429
+[2022-11-14 10:14:45,065-rk0-data_manager.py# 43] ransomware: 1020
+[2022-11-14 10:14:45,066-rk0-data_manager.py# 43] xss: 429862
+[2022-11-14 10:14:45,066-rk0-data_manager.py# 43] Benign: 503048
+[2022-11-14 10:14:45,068-rk0-data_manager.py# 44] TOTAL_SIZE:1070356
+[2022-11-14 10:14:45,068-rk0-data_manager.py# 45] ----------------------------------------------------
+[2022-11-14 10:14:49,683-rk0-server.py# 93] left columns:62
+[2022-11-14 10:15:12,269-rk0-FL_train_server.py# 54] log init done
+[2022-11-14 10:15:20,736-rk0-data_manager.py# 39] ----------------------------------------------------
+[2022-11-14 10:15:20,736-rk0-data_manager.py# 40]             testset     information                 
+[2022-11-14 10:15:21,420-rk0-data_manager.py# 43] mitm: 104
+[2022-11-14 10:15:21,420-rk0-data_manager.py# 43] scanning: 7241
+[2022-11-14 10:15:21,420-rk0-data_manager.py# 43] dos: 29
+[2022-11-14 10:15:21,421-rk0-data_manager.py# 43] ddos: 41
+[2022-11-14 10:15:21,421-rk0-data_manager.py# 43] injection: 55540
+[2022-11-14 10:15:21,421-rk0-data_manager.py# 43] password: 68042
+[2022-11-14 10:15:21,421-rk0-data_manager.py# 43] backdoor: 5429
+[2022-11-14 10:15:21,421-rk0-data_manager.py# 43] ransomware: 1020
+[2022-11-14 10:15:21,421-rk0-data_manager.py# 43] xss: 429862
+[2022-11-14 10:15:21,421-rk0-data_manager.py# 43] Benign: 503048
+[2022-11-14 10:15:21,423-rk0-data_manager.py# 44] TOTAL_SIZE:1070356
+[2022-11-14 10:15:21,423-rk0-data_manager.py# 45] ----------------------------------------------------
+[2022-11-14 10:15:30,264-rk0-server.py# 93] left columns:62

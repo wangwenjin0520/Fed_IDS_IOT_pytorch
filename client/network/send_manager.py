@@ -3,9 +3,21 @@ import socket
 import os
 import logging
 import struct
-from federated_learning.utils.device_info import mydevice
+import json
 logger = logging.getLogger('global')
 
+
+def socket_send_feature_importance(message, address, port):
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.connect((address, port))
+    data = json.dumps(message)
+    while True:
+        s.send(bytes(data, encoding="utf-8"))
+        buf = s.recv(3)
+        if buf.decode('utf-8') == "200":
+            s.shutdown(2)
+            s.close()
+            break
 
 def socket_client(filepath):
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

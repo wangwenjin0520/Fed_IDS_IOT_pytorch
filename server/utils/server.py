@@ -1,8 +1,11 @@
 import os
-
+from server.model.CNN import CNN
+from server.model.GRU import GRU
+from server.model.LSTM import LSTM
 from server.utils.data_manager import load_test, MyDataset
 from server.utils.calculate import score
-from server.network.send_manager import socket_send_init_client
+from server.network.send_manager import socket_send_init_client, socket_send_drop_columns
+from server.network.receive_manager import socket_receive_feature_selection
 from torch.utils.data import DataLoader
 import torch
 import time
@@ -16,7 +19,7 @@ class server_info:
         self.batch_size = 4096
         self.attack_dict = {"mitm": 0, "scanning": 1, "dos": 2, "ddos": 3, "injection": 4, "password": 5,
                             "backdoor": 6, "ransomware": 7, "xss": 8, "Benign": 9}
-        self.device = 'cuda'
+        self.device = 'cpu'
         self.model_type = 0  # 0:GRU, 1:LSTM 2:CNN
         self.optimizer_type = 1  # 0:sgd, 1:adam
         self.num_workers = 0
@@ -67,20 +70,21 @@ class server_info:
         for key in header:
             self.importance_dict.update({key: 0})
 
-    def importance_append(self, importance):
-        for key, value in importance.items():
-            self.importance_dict[key] += value
+    def feature_reduction(self):
+        result = socket_receive_feature_selection(self.address, self.port, self.target)
+        for importance in result:
+            for key, value in importance.items():
+                self.importance_dict[key] += value
 
-    def importance_calculation(self):
         drop_columns = []
         self.importance_dict = dict(sorted(self.importance_dict.items(), key=lambda x: x[1], reverse=False))
         for key, value in self.importance_dict.items():
             if value < self.score_threshold:
                 drop_columns.append(key)
-        return drop_columns
+        for client in self.target:
+            socket_send_drop_columns(drop_columns, client["address"], client["port"])
 
-    def feature_reduction(self, columns):
-        self.data = self.data.drop(columns, axis=1)
+        self.data = self.data.drop(drop_columns, axis=1)
         self.feature_size = len(self.data.columns)
         test_set = MyDataset(self.data, self.label, len(self.attack_dict))
         self.test_loader = DataLoader(dataset=test_set,
@@ -89,6 +93,25 @@ class server_info:
                                       num_workers=0,
                                       drop_last=True)
         logger.info("left columns:{}".format(str(self.feature_size)))
+
+    def init_client_model(self):
+        if self.model_type == 0:
+            model = GRU(input_size=self.feature_size,
+                        hidden_layer_size=256,
+                        num_layers=2,
+                        output_size=len(self.attack_dict),
+                        dropout=0)
+        elif self.model_type == 1:
+            model = LSTM(input_size=self.feature_size,
+                         output_size=len(self.attack_dict),
+                         hidden_layer_size=256,
+                         num_layers=2,
+                         dropout=0)
+        else:
+            model = CNN(input_size=self.feature_size,
+                        output_size=len(self.attack_dict))
+        model_state_dict = {"model": model.state_dict()}
+        torch.save(model_state_dict, "./snapshot/global.pth")
 
     def aggregation(self):
         os.remove('./snapshot/after/global.pth')

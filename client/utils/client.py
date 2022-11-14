@@ -1,7 +1,13 @@
 import numpy as np
 import os
+from client.model.CNN import CNN
+from client.model.GRU import GRU
+from client.model.LSTM import LSTM
+from client.loss.crossentropyloss import LabelSmoothCrossEntropyLoss
+from client.loss.centerloss import CenterLoss
 from client.utils.data_manager import load_train, MyDataset
-from client.network.receive_manager import socket_service_init
+from client.network.receive_manager import socket_service_init_parameter, socket_service_init_usecolumns
+from client.network.send_manager import socket_send_feature_importance
 from torch.utils.data import DataLoader
 from sklearn.feature_selection import SelectKBest, chi2
 import logging
@@ -17,16 +23,18 @@ class client_info:
         self.batch_size = 16384
         self.attack_dict = {"mitm": 0, "scanning": 1, "dos": 2, "ddos": 3, "injection": 4, "password": 5,
                             "backdoor": 6, "ransomware": 7, "xss": 8, "Benign": 9}
-        self.device = 'cuda'
+        self.device = 'cpu'
         self.model_type = model_type  # 0:GRU, 1:LSTM 2:CNNGRU 3:CNN
         self.optimizer_type = 1  # 0:sgd, 1:adam
+        self.feature_size = 0
         self.num_workers = 0
         self.learning_rate = 0.001
         self.weight_decay = 5e-4
         self.momentum = 0.9
         self.fed_algorithm = fed_algorithm
         self.fedprox_mu = 0.01  # 0.12  # 0.3
-        self.device_epoch = 1  # IoT_FD epoch for each communication epoch
+        self.local_epoch = 1  # IoT_FD epoch for each communication epoch
+        self.global_epoch = 400
         self.federated_epoch = federated_epoch
         self.data = None
         self.label = None
@@ -34,9 +42,16 @@ class client_info:
         self.dataset_header = None
         self.address = '192.168.255.1'
         self.port = 4000
+        self.target_address = '192.168.255.1'
+        self.target_port = 8080
 
     def init(self):
-        socket_service_init(self.address, self.port)
+        result = socket_service_init_parameter(self.address, self.port)
+        self.attack_dict = result["attack_dic"]
+        self.model_type = result["model_type"]
+        self.fed_algorithm = result["fed_algorithm"]
+        self.local_epoch = result["local_epoch"]
+        self.global_epoch = result["global_epoch"]
 
     def load_dataset(self):
         self.data, self.label = load_train(self.attack_dict)
@@ -49,17 +64,59 @@ class client_info:
         importance = model_sk.scores_
         importance = np.nan_to_num(importance)
         for key, value in zip(header, list(importance)):
-            importance_dict.update({key: value})
-        return importance_dict
+            importance_dict.update({key: round(value, 2)})
+        socket_send_feature_importance(importance_dict, self.target_address, self.target_port)
 
-    def feature_reduction(self, columns):
-        self.data = self.data.drop(columns, axis=1)
+    def feature_reduction(self):
+        result = socket_service_init_usecolumns(self.address, self.port)
+        self.data = self.data.drop(result, axis=1)
+        self.feature_size = len(self.data.columns)
         train_set = MyDataset(self.data, self.label, len(self.attack_dict))
         self.train_loader = DataLoader(dataset=train_set,
                                        batch_size=self.batch_size,
                                        shuffle=True,
                                        num_workers=0,
                                        drop_last=True)
+
+    def criterion_init(self):
+        # model
+        if self.model_type == 0:
+            model = GRU(input_size=self.feature_size,
+                        hidden_layer_size=256,
+                        num_layers=2,
+                        output_size=len(self.attack_dict),
+                        dropout=0)
+        elif self.model_type == 1:
+            model = LSTM(input_size=self.feature_size,
+                         output_size=len(self.attack_dict),
+                         hidden_layer_size=256,
+                         num_layers=2,
+                         dropout=0)
+        else:
+            model = CNN(input_size=self.feature_size,
+                        output_size=len(self.attack_dict))
+
+        # optimizers
+        optimizer = torch.optim.Adam(model.parameters(),
+                                     lr=self.learning_rate,
+                                     weight_decay=self.weight_decay)
+
+        criterions = [LabelSmoothCrossEntropyLoss(device=self.device),
+                      CenterLoss(num_classes=len(self.attack_dict),
+                                 feat_dim=256,
+                                 device=self.device)]
+
+        return model.to(torch.device(self.device)), optimizer, criterions
+
+    def init_model(self):
+        global_model, global_optimizer, global_criterions = self.criterion_init()
+        if self.fed_algorithm != 'fedavg' and self.fed_algorithm != 'fedavg+centerloss':
+            tmp_model, _, _ = self.criterion_init()
+        model_state_dict = {"model": global_model.state_dict()}
+        optimizer_state_dict = {"optimizer": global_optimizer.state_dict()}
+        torch.save(model_state_dict, "./snapshot/after/global.pth")
+        torch.save(optimizer_state_dict, "./snapshot/before/optimizer_device" + str(device_id) + ".pth")
+        torch.save(model_state_dict, "./snapshot/before/model_device" + str(device_id) + ".pth")
 
     def train(self, model=None, tmp_model=None, criterions=None, optimizer=None):
         global_model_state = torch.load('./snapshot/after/global.pth')

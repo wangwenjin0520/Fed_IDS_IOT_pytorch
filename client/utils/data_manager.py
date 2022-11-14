@@ -32,9 +32,8 @@ def normalization(data):
 
 def load_train(attack_dict):
     files_name = './dataset/dataset.csv'
-    datasets = pd.read_csv(files_name)#, usecols=use_columns_3)
+    datasets = pd.read_csv(files_name)
     datasets = datasets.replace({'label': attack_dict})
-    # datasets_seperation = balanced(datasets_seperation)
     total_size = len(datasets)
     datasets_group = datasets.groupby(by='label')
     logger.info("----------------------------------------------------")
