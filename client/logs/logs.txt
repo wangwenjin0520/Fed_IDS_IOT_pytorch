@@ -1093,3 +1093,219 @@
 [2022-11-15 02:06:38,727-rk0-network.py# 66] model transmission completed
 [2022-11-15 02:07:17,003-rk0-network.py#112] model from server is received
 [2022-11-15 02:07:17,004-rk0-client.py#207] --------------------------------------------------------------
+[2022-11-15 12:34:51,332-rk0-FL_train_client.py# 55] log init done
+[2022-11-15 12:35:52,492-rk0-FL_train_client.py# 55] log init done
+[2022-11-15 12:36:52,231-rk0-FL_train_client.py# 55] log init done
+[2022-11-15 12:38:25,504-rk0-FL_train_client.py# 55] log init done
+[2022-11-15 12:41:00,520-rk0-FL_train_client.py# 55] log init done
+[2022-11-15 12:42:25,213-rk0-FL_train_client.py# 55] log init done
+[2022-11-15 12:43:11,042-rk0-FL_train_client.py# 55] log init done
+[2022-11-15 12:44:25,714-rk0-FL_train_client.py# 55] log init done
+[2022-11-15 12:44:54,795-rk0-FL_train_client.py# 55] log init done
+[2022-11-15 12:45:22,028-rk0-FL_train_client.py# 55] log init done
+[2022-11-15 12:45:33,185-rk0-FL_train_client.py# 55] log init done
+[2022-11-15 12:46:28,177-rk0-FL_train_client.py# 55] log init done
+[2022-11-15 12:46:42,626-rk0-data_manager.py# 39] ----------------------------------------------------
+[2022-11-15 12:46:42,626-rk0-data_manager.py# 40]                dataset information                  
+[2022-11-15 12:46:43,221-rk0-data_manager.py# 43] mitm: 82
+[2022-11-15 12:46:43,221-rk0-data_manager.py# 43] scanning: 5792
+[2022-11-15 12:46:43,222-rk0-data_manager.py# 43] dos: 23
+[2022-11-15 12:46:43,222-rk0-data_manager.py# 43] ddos: 32
+[2022-11-15 12:46:43,222-rk0-data_manager.py# 43] injection: 44431
+[2022-11-15 12:46:43,222-rk0-data_manager.py# 43] password: 54433
+[2022-11-15 12:46:43,222-rk0-data_manager.py# 43] backdoor: 4343
+[2022-11-15 12:46:43,222-rk0-data_manager.py# 43] ransomware: 815
+[2022-11-15 12:46:43,222-rk0-data_manager.py# 43] xss: 343889
+[2022-11-15 12:46:43,222-rk0-data_manager.py# 43] Benign: 402437
+[2022-11-15 12:46:43,223-rk0-data_manager.py# 44] TOTAL_SIZE:856277
+[2022-11-15 12:46:43,223-rk0-data_manager.py# 45] ----------------------------------------------------
+[2022-11-15 13:20:24,362-rk0-FL_train_client.py# 55] log init done
+[2022-11-15 13:20:34,722-rk0-data_manager.py# 39] ----------------------------------------------------
+[2022-11-15 13:20:34,722-rk0-data_manager.py# 40]                dataset information                  
+[2022-11-15 13:20:35,277-rk0-data_manager.py# 43] mitm: 82
+[2022-11-15 13:20:35,277-rk0-data_manager.py# 43] scanning: 5792
+[2022-11-15 13:20:35,277-rk0-data_manager.py# 43] dos: 23
+[2022-11-15 13:20:35,277-rk0-data_manager.py# 43] ddos: 32
+[2022-11-15 13:20:35,277-rk0-data_manager.py# 43] injection: 44431
+[2022-11-15 13:20:35,277-rk0-data_manager.py# 43] password: 54433
+[2022-11-15 13:20:35,277-rk0-data_manager.py# 43] backdoor: 4343
+[2022-11-15 13:20:35,277-rk0-data_manager.py# 43] ransomware: 815
+[2022-11-15 13:20:35,278-rk0-data_manager.py# 43] xss: 343889
+[2022-11-15 13:20:35,278-rk0-data_manager.py# 43] Benign: 402437
+[2022-11-15 13:20:35,279-rk0-data_manager.py# 44] TOTAL_SIZE:856277
+[2022-11-15 13:20:35,279-rk0-data_manager.py# 45] ----------------------------------------------------
+[2022-11-15 13:20:38,830-rk0-FL_train_client.py# 64] dataset build done. time:14.4657
+[2022-11-15 13:20:48,633-rk0-FL_train_client.py# 71] importance finished, time:9.8024
+[2022-11-15 13:20:48,870-rk0-network.py#112] model from server is received
+[2022-11-15 13:20:48,873-rk0-FL_train_client.py# 77] start training
+[2022-11-15 13:22:34,858-rk0-FL_train_client.py# 55] log init done
+[2022-11-15 13:22:41,622-rk0-data_manager.py# 39] ----------------------------------------------------
+[2022-11-15 13:22:41,623-rk0-data_manager.py# 40]                dataset information                  
+[2022-11-15 13:22:42,214-rk0-data_manager.py# 43] mitm: 82
+[2022-11-15 13:22:42,214-rk0-data_manager.py# 43] scanning: 5792
+[2022-11-15 13:22:42,214-rk0-data_manager.py# 43] dos: 23
+[2022-11-15 13:22:42,214-rk0-data_manager.py# 43] ddos: 32
+[2022-11-15 13:22:42,215-rk0-data_manager.py# 43] injection: 44431
+[2022-11-15 13:22:42,215-rk0-data_manager.py# 43] password: 54433
+[2022-11-15 13:22:42,215-rk0-data_manager.py# 43] backdoor: 4343
+[2022-11-15 13:22:42,215-rk0-data_manager.py# 43] ransomware: 815
+[2022-11-15 13:22:42,215-rk0-data_manager.py# 43] xss: 343889
+[2022-11-15 13:22:42,215-rk0-data_manager.py# 43] Benign: 402437
+[2022-11-15 13:22:42,216-rk0-data_manager.py# 44] TOTAL_SIZE:856277
+[2022-11-15 13:22:42,216-rk0-data_manager.py# 45] ----------------------------------------------------
+[2022-11-15 13:22:45,243-rk0-FL_train_client.py# 64] dataset build done. time:10.3852
+[2022-11-15 13:22:47,680-rk0-FL_train_client.py# 71] importance finished, time:2.4369
+[2022-11-15 13:22:47,849-rk0-network.py#112] model from server is received
+[2022-11-15 13:22:47,852-rk0-FL_train_client.py# 77] start training
+[2022-11-15 13:23:37,931-rk0-client.py#201] Epoch [1/2], Train Loss mean: 0.7906, running time:50.0686s
+[2022-11-15 13:23:38,035-rk0-network.py# 66] model transmission completed
+[2022-11-15 13:24:22,282-rk0-network.py#112] model from server is received
+[2022-11-15 13:24:22,282-rk0-client.py#208] --------------------------------------------------------------
+[2022-11-15 13:25:18,891-rk0-client.py#201] Epoch [2/2], Train Loss mean: 0.6867, running time:56.6077s
+[2022-11-15 13:27:34,492-rk0-FL_train_client.py# 55] log init done
+[2022-11-15 13:27:43,322-rk0-data_manager.py# 39] ----------------------------------------------------
+[2022-11-15 13:27:43,322-rk0-data_manager.py# 40]                dataset information                  
+[2022-11-15 13:27:43,858-rk0-data_manager.py# 43] mitm: 82
+[2022-11-15 13:27:43,858-rk0-data_manager.py# 43] scanning: 5792
+[2022-11-15 13:27:43,859-rk0-data_manager.py# 43] dos: 23
+[2022-11-15 13:27:43,859-rk0-data_manager.py# 43] ddos: 32
+[2022-11-15 13:27:43,859-rk0-data_manager.py# 43] injection: 44431
+[2022-11-15 13:27:43,859-rk0-data_manager.py# 43] password: 54433
+[2022-11-15 13:27:43,859-rk0-data_manager.py# 43] backdoor: 4343
+[2022-11-15 13:27:43,859-rk0-data_manager.py# 43] ransomware: 815
+[2022-11-15 13:27:43,859-rk0-data_manager.py# 43] xss: 343889
+[2022-11-15 13:27:43,859-rk0-data_manager.py# 43] Benign: 402437
+[2022-11-15 13:27:43,860-rk0-data_manager.py# 44] TOTAL_SIZE:856277
+[2022-11-15 13:27:43,860-rk0-data_manager.py# 45] ----------------------------------------------------
+[2022-11-15 13:27:46,942-rk0-FL_train_client.py# 64] dataset build done. time:12.4484
+[2022-11-15 13:27:56,395-rk0-FL_train_client.py# 71] importance finished, time:9.4535
+[2022-11-15 13:27:56,534-rk0-network.py#112] model from server is received
+[2022-11-15 13:27:56,537-rk0-FL_train_client.py# 77] start training
+[2022-11-15 13:28:45,568-rk0-client.py#201] Epoch [1/2], Train Loss mean: 0.7853, running time:49.0276s
+[2022-11-15 13:28:45,670-rk0-network.py# 66] model transmission completed
+[2022-11-15 13:29:43,844-rk0-network.py#112] model from server is received
+[2022-11-15 13:29:43,844-rk0-client.py#208] --------------------------------------------------------------
+[2022-11-15 13:30:33,554-rk0-client.py#201] Epoch [2/2], Train Loss mean: 0.6886, running time:49.7080s
+[2022-11-15 13:30:33,671-rk0-network.py# 66] model transmission completed
+[2022-11-15 13:31:33,094-rk0-network.py#112] model from server is received
+[2022-11-15 13:31:33,094-rk0-client.py#208] --------------------------------------------------------------
+[2022-11-15 23:45:38,735-rk0-FL_train_client.py# 55] log init done
+[2022-11-16 00:18:30,482-rk0-FL_train_client.py# 55] log init done
+[2022-11-16 00:34:12,643-rk0-FL_train_client.py# 55] log init done
+[2022-11-16 10:12:50,356-rk0-FL_train_client.py# 55] log init done
+[2022-11-16 10:18:44,026-rk0-FL_train_client.py# 55] log init done
+[2022-11-16 10:19:17,429-rk0-FL_train_client.py# 55] log init done
+[2022-11-16 10:20:11,642-rk0-FL_train_client.py# 55] log init done
+[2022-11-16 10:22:41,708-rk0-FL_train_client.py# 55] log init done
+[2022-11-16 10:57:42,178-rk0-FL_train_client.py# 55] log init done
+[2022-11-16 11:04:53,794-rk0-FL_train_client.py# 55] log init done
+[2022-11-16 12:06:39,809-rk0-FL_train_client.py# 55] log init done
+[2022-11-16 12:06:48,118-rk0-FL_train_client.py# 55] log init done
+[2022-11-16 12:06:58,849-rk0-data_manager.py# 39] ----------------------------------------------------
+[2022-11-16 12:06:58,850-rk0-data_manager.py# 40]                dataset information                  
+[2022-11-16 12:06:59,379-rk0-data_manager.py# 43] mitm: 82
+[2022-11-16 12:06:59,379-rk0-data_manager.py# 43] scanning: 5792
+[2022-11-16 12:06:59,379-rk0-data_manager.py# 43] dos: 23
+[2022-11-16 12:06:59,380-rk0-data_manager.py# 43] ddos: 32
+[2022-11-16 12:06:59,380-rk0-data_manager.py# 43] injection: 44431
+[2022-11-16 12:06:59,380-rk0-data_manager.py# 43] password: 54433
+[2022-11-16 12:06:59,380-rk0-data_manager.py# 43] backdoor: 4343
+[2022-11-16 12:06:59,380-rk0-data_manager.py# 43] ransomware: 815
+[2022-11-16 12:06:59,380-rk0-data_manager.py# 43] xss: 343889
+[2022-11-16 12:06:59,380-rk0-data_manager.py# 43] Benign: 402437
+[2022-11-16 12:06:59,381-rk0-data_manager.py# 44] TOTAL_SIZE:856277
+[2022-11-16 12:06:59,381-rk0-data_manager.py# 45] ----------------------------------------------------
+[2022-11-16 12:07:02,242-rk0-FL_train_client.py# 64] dataset build done. time:14.1223
+[2022-11-16 12:07:09,970-rk0-FL_train_client.py# 71] importance finished, time:7.7283
+[2022-11-16 12:07:10,114-rk0-network.py#112] model from server is received
+[2022-11-16 12:07:10,117-rk0-FL_train_client.py# 77] start training
+[2022-11-18 08:53:09,233-rk0-FL_train_client.py# 55] log init done
+[2022-11-18 08:54:04,757-rk0-FL_train_client.py# 55] log init done
+[2022-11-18 09:01:05,249-rk0-FL_train_client.py# 55] log init done
+[2022-11-18 09:03:59,926-rk0-FL_train_client.py# 55] log init done
+[2022-11-18 09:07:26,007-rk0-FL_train_client.py# 55] log init done
+[2022-11-18 09:15:28,943-rk0-FL_train_client.py# 55] log init done
+[2022-11-18 09:15:37,812-rk0-FL_train_client.py# 55] log init done
+[2022-11-18 09:18:54,094-rk0-FL_train_client.py# 55] log init done
+[2022-11-18 09:19:18,551-rk0-FL_train_client.py# 55] log init done
+[2022-11-18 09:20:04,919-rk0-FL_train_client.py# 55] log init done
+[2022-11-18 09:20:15,426-rk0-data_manager.py# 39] ----------------------------------------------------
+[2022-11-18 09:20:15,426-rk0-data_manager.py# 40]                dataset information                  
+[2022-11-18 09:20:15,950-rk0-data_manager.py# 43] mitm: 82
+[2022-11-18 09:20:15,950-rk0-data_manager.py# 43] scanning: 5792
+[2022-11-18 09:20:15,950-rk0-data_manager.py# 43] dos: 23
+[2022-11-18 09:20:15,951-rk0-data_manager.py# 43] ddos: 32
+[2022-11-18 09:20:15,951-rk0-data_manager.py# 43] injection: 44431
+[2022-11-18 09:20:15,951-rk0-data_manager.py# 43] password: 54433
+[2022-11-18 09:20:15,951-rk0-data_manager.py# 43] backdoor: 4343
+[2022-11-18 09:20:15,951-rk0-data_manager.py# 43] ransomware: 815
+[2022-11-18 09:20:15,951-rk0-data_manager.py# 43] xss: 343889
+[2022-11-18 09:20:15,951-rk0-data_manager.py# 43] Benign: 402437
+[2022-11-18 09:20:15,952-rk0-data_manager.py# 44] TOTAL_SIZE:856277
+[2022-11-18 09:20:15,952-rk0-data_manager.py# 45] ----------------------------------------------------
+[2022-11-18 09:20:18,495-rk0-FL_train_client.py# 64] dataset build done. time:13.5722
+[2022-11-18 09:20:26,813-rk0-FL_train_client.py# 71] importance finished, time:8.3176
+[2022-11-18 09:20:27,031-rk0-network.py#118] model from server is received
+[2022-11-18 09:20:27,034-rk0-FL_train_client.py# 77] start training
+[2022-11-18 09:20:58,502-rk0-client.py#202] Epoch [1/2], Train Loss mean: 0.8353, running time:31.4548s
+[2022-11-18 09:20:58,586-rk0-network.py# 72] model transmission completed
+[2022-11-18 09:21:41,562-rk0-network.py#118] model from server is received
+[2022-11-18 09:21:41,563-rk0-client.py#209] --------------------------------------------------------------
+[2022-11-18 09:22:11,227-rk0-client.py#202] Epoch [2/2], Train Loss mean: 0.6887, running time:29.6624s
+[2022-11-18 09:22:11,342-rk0-network.py# 72] model transmission completed
+[2022-11-18 09:22:47,285-rk0-network.py#118] model from server is received
+[2022-11-18 09:22:47,285-rk0-client.py#209] --------------------------------------------------------------
+[2022-11-18 10:20:04,806-rk0-FL_train_client.py# 55] log init done
+[2022-11-18 10:21:35,176-rk0-FL_train_client.py# 55] log init done
+[2022-11-18 10:22:00,589-rk0-FL_train_client.py# 55] log init done
+[2022-11-18 10:22:11,824-rk0-data_manager.py# 39] ----------------------------------------------------
+[2022-11-18 10:22:11,824-rk0-data_manager.py# 40]                dataset information                  
+[2022-11-18 10:22:12,462-rk0-data_manager.py# 43] mitm: 82
+[2022-11-18 10:22:12,462-rk0-data_manager.py# 43] scanning: 5792
+[2022-11-18 10:22:12,462-rk0-data_manager.py# 43] dos: 23
+[2022-11-18 10:22:12,462-rk0-data_manager.py# 43] ddos: 32
+[2022-11-18 10:22:12,462-rk0-data_manager.py# 43] injection: 44431
+[2022-11-18 10:22:12,462-rk0-data_manager.py# 43] password: 54433
+[2022-11-18 10:22:12,462-rk0-data_manager.py# 43] backdoor: 4343
+[2022-11-18 10:22:12,462-rk0-data_manager.py# 43] ransomware: 815
+[2022-11-18 10:22:12,462-rk0-data_manager.py# 43] xss: 343889
+[2022-11-18 10:22:12,463-rk0-data_manager.py# 43] Benign: 402437
+[2022-11-18 10:22:12,464-rk0-data_manager.py# 44] TOTAL_SIZE:856277
+[2022-11-18 10:22:12,464-rk0-data_manager.py# 45] ----------------------------------------------------
+[2022-11-18 10:22:15,571-rk0-FL_train_client.py# 64] dataset build done. time:14.9701
+[2022-11-18 10:22:23,874-rk0-FL_train_client.py# 71] importance finished, time:8.3030
+[2022-11-18 10:22:24,143-rk0-network.py#117] model from server is received
+[2022-11-18 10:22:24,148-rk0-FL_train_client.py# 77] start training
+[2022-11-18 10:23:23,786-rk0-client.py#201] Epoch [1/2], Train Loss mean: 0.7664, running time:59.6261s
+[2022-11-18 10:23:24,039-rk0-network.py# 71] model transmission completed
+[2022-11-18 10:24:28,113-rk0-network.py#117] model from server is received
+[2022-11-18 10:24:28,113-rk0-client.py#208] --------------------------------------------------------------
+[2022-11-18 10:25:08,860-rk0-client.py#201] Epoch [2/2], Train Loss mean: 0.7013, running time:40.7441s
+[2022-11-18 10:25:08,998-rk0-network.py# 71] model transmission completed
+[2022-11-18 10:26:07,568-rk0-network.py#117] model from server is received
+[2022-11-18 10:26:07,568-rk0-client.py#208] --------------------------------------------------------------
+[2022-11-18 10:34:22,335-rk0-FL_train_client.py# 55] log init done
+[2022-11-18 10:34:31,932-rk0-data_manager.py# 39] ----------------------------------------------------
+[2022-11-18 10:34:31,932-rk0-data_manager.py# 40]                dataset information                  
+[2022-11-18 10:34:32,831-rk0-data_manager.py# 43] mitm: 82
+[2022-11-18 10:34:32,832-rk0-data_manager.py# 43] scanning: 5792
+[2022-11-18 10:34:32,832-rk0-data_manager.py# 43] dos: 23
+[2022-11-18 10:34:32,832-rk0-data_manager.py# 43] ddos: 32
+[2022-11-18 10:34:32,832-rk0-data_manager.py# 43] injection: 44431
+[2022-11-18 10:34:32,832-rk0-data_manager.py# 43] password: 54433
+[2022-11-18 10:34:32,833-rk0-data_manager.py# 43] backdoor: 4343
+[2022-11-18 10:34:32,833-rk0-data_manager.py# 43] ransomware: 815
+[2022-11-18 10:34:32,833-rk0-data_manager.py# 43] xss: 343889
+[2022-11-18 10:34:32,833-rk0-data_manager.py# 43] Benign: 402437
+[2022-11-18 10:34:32,836-rk0-data_manager.py# 44] TOTAL_SIZE:856277
+[2022-11-18 10:34:32,836-rk0-data_manager.py# 45] ----------------------------------------------------
+[2022-11-18 10:34:37,532-rk0-FL_train_client.py# 64] dataset build done. time:15.1807
+[2022-11-18 10:34:48,488-rk0-FL_train_client.py# 71] importance finished, time:10.9562
+[2022-11-18 10:34:48,983-rk0-network.py#117] model from server is received
+[2022-11-18 10:34:48,990-rk0-FL_train_client.py# 77] start training
+[2022-11-18 10:35:45,996-rk0-client.py#201] Epoch [1/2], Train Loss mean: 0.7939, running time:57.0005s
+[2022-11-18 10:35:46,208-rk0-network.py# 71] model transmission completed
+[2022-11-18 10:37:00,831-rk0-network.py#117] model from server is received
+[2022-11-18 10:37:00,831-rk0-client.py#208] --------------------------------------------------------------
+[2022-11-18 10:37:56,978-rk0-client.py#201] Epoch [2/2], Train Loss mean: 0.7254, running time:56.1442s
+[2022-11-18 10:37:57,187-rk0-network.py# 71] model transmission completed

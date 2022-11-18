@@ -3,6 +3,7 @@ import logging
 import struct
 import json
 import hashlib
+import ssl
 logger = logging.getLogger('global')
 
 
@@ -34,10 +35,14 @@ class network:
         self.connection = None
         
     def build_connection(self):
-        self.connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.connection.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        self.connection.bind((self.address, self. port))
-        self.connection.connect((self.target_address, self.target_port))
+        context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
+        context.check_hostname = False
+        context.verify_mode = ssl.CERT_NONE
+        tmp_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        tmp_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        tmp_socket.bind((self.address, self.port))
+        tmp_socket.connect((self.target_address, self.target_port))
+        self.connection = context.wrap_socket(tmp_socket)
 
     def socket_send_feature_importance(self, message):
         data = json.dumps(message)

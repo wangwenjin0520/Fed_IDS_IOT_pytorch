@@ -4,7 +4,7 @@ import socket
 import struct
 import time
 import logging
-import os
+import ssl
 from threading import Thread
 
 logger = logging.getLogger('global')
@@ -75,19 +75,23 @@ class network:
     def load_client(self):
         file = open('./utils/config.txt', 'r')
         lines = file.readlines()
-        for (index, line) in enumerate(lines):
-            client = line.split(",")
+        for index, line in enumerate(lines):
+            client = line.rstrip("\n").split(",")
             name = client[0] + ":" + client[1]
             self.target.update({name: {"id": index}})
-        s = socket.socket()
+        context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+        context.load_cert_chain('./network/ca.pem', './network/ca-key.pem')
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         s.bind((self.address, self.port))
         s.listen(10)
+        ss = context.wrap_socket(s, server_side=True)
         for i in range(len(self.target)):
-            conn, addr = s.accept()
+            conn, addr = ss.accept()
             client_name = str(addr[0]) + ":" + str(addr[1])
             if client_name in self.target.keys():
                 self.target[client_name].update({"connection": conn})
+        ss.close()
         s.close()
 
     def socket_receive_feature_selection(self):
@@ -155,7 +159,6 @@ class network:
                 fp_tmp.close()
                 buf = value["connection"].recv(1024)
                 if buf.decode("utf-8") == "200":
-                    os.remove("./snapshot/global.pth")
                     logger.info('model transmission completed')
                     break
                 else:

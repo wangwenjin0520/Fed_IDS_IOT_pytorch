@@ -43,7 +43,7 @@ class server_info:
         # network
         self.device_epoch = 1  # IoT_FD epoch for each communication epoch
         self.federated_epoch = 4
-        self.address = '192.168.255.1'
+        self.address = '10.201.45.56'
         self.port = 8080
         self.network = None
 
@@ -53,6 +53,7 @@ class server_info:
 
     def init_client(self):
         send_message = {
+            "batch_size": self.batch_size,
             "attack_dic": self.attack_dict,
             "model_type": self.model_type,
             "fed_algorithm": self.fed_algorithm,
@@ -148,7 +149,7 @@ class server_info:
                 self.model.load_state_dict(model_state_dict["model"])
                 accuracy, precision, recall, f1_score = self.evaluation()
                 s.update(key, global_epoch, accuracy, precision, recall, f1_score)
-                self.network.socket_send_file()
+            self.network.socket_send_file()
 
         self.network.close()
         s.plot()

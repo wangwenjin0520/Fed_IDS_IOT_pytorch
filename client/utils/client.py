@@ -44,9 +44,9 @@ class client_info:
         self.tmp_model = None
         self.global_optimizer = None
         self.global_criterions = None
-        self.address = '192.168.255.1'
+        self.address = '10.201.45.56'#'192.168.255.1'
         self.port = 4000
-        self.target_address = '192.168.255.1'
+        self.target_address = '10.201.45.56'#'192.168.255.1'
         self.target_port = 8080
         self.network = None
 
@@ -54,6 +54,7 @@ class client_info:
         self.network = network(self.address, self.port, self.target_address, self.target_port)
         self.network.build_connection()
         result = self.network.socket_receive_init_parameter()
+        self.batch_size = result["batch_size"]
         self.attack_dict = result["attack_dic"]
         self.model_type = result["model_type"]
         self.fed_algorithm = result["fed_algorithm"]
