@@ -3,3 +3,6 @@
 /workspace.xml
 *.pth
 /.idea/
+*.pyc
+*.xlsx
+logs.txt
