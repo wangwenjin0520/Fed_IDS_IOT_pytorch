@@ -6,3 +6,4 @@
 *.pyc
 *.xlsx
 logs.txt
+/__pycache__/
